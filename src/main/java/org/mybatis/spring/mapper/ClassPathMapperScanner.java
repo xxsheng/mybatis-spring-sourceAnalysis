@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2019 the original author or authors.
+ * Copyright 2010-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 package org.mybatis.spring.mapper;
+
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Set;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.logging.Logger;
@@ -31,10 +35,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.util.StringUtils;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.Set;
-
 /**
  * A {@link ClassPathBeanDefinitionScanner} that registers Mappers by {@code basePackage}, {@code annotationClass}, or
  * {@code markerInterface}. If an {@code annotationClass} and/or {@code markerInterface} is specified, only the
@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * @author Hunter Presnall
  * @author Eduardo Macarron
- * 
+ *
  * @see MapperFactoryBean
  * @since 1.2.0
  */
@@ -144,11 +144,22 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
     boolean acceptAllInterfaces = true;
 
     // if specified, use the given annotation and / or marker interface
+    // 对于annotationClass属性的处理
+    /*
+    * 如果annotationClass不为空，表示用户设置了此属性，那么就要根据此属性生产过滤器以达到用户想要的效果，而封装
+    * 此属性的过滤器就是annotationTypeFilter。annotationTypeFilter保证在扫描对应的java文件时候只接受标记有注解
+    * 为annotationClass的接口。
+    *
+    * */
     if (this.annotationClass != null) {
       addIncludeFilter(new AnnotationTypeFilter(this.annotationClass));
       acceptAllInterfaces = false;
     }
 
+    // 对于markerInterface属性的处理
+    /*
+    * 标记只实现了markerInterface接口的才会被接受
+    * */
     // override AssignableTypeFilter to ignore matches on the actual marker interface
     if (this.markerInterface != null) {
       addIncludeFilter(new AssignableTypeFilter(this.markerInterface) {
@@ -181,6 +192,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
     Set<BeanDefinitionHolder> beanDefinitions = super.doScan(basePackages);
 
     if (beanDefinitions.isEmpty()) {
+      // 如果没有扫描到任何文件则发出警告
       LOGGER.warn(() -> "No MyBatis mapper was found in '" + Arrays.toString(basePackages)
           + "' package. Please check your configuration.");
     } else {
@@ -200,6 +212,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
       // the mapper interface is the original class of the bean
       // but, the actual class of the bean is MapperFactoryBean
+      // 开始构造MapperFactoryBean类型的bean
       definition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName); // issue #59
       definition.setBeanClass(this.mapperFactoryBeanClass);
 
@@ -234,6 +247,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
       if (!explicitFactoryUsed) {
         LOGGER.debug(() -> "Enabling autowire by type for MapperFactoryBean with name '" + holder.getBeanName() + "'.");
+        // 此处将mapper自动注入模型设置为byType（set注入类型）
         definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
       }
       definition.setLazyInit(lazyInitialization);

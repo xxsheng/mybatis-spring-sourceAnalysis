@@ -334,6 +334,7 @@ public class MapperScannerConfigurer
    */
   @Override
   public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
+    // 动态替换一些属性值
     if (this.processPropertyPlaceHolders) {
       processPropertyPlaceHolders();
     }
@@ -346,6 +347,7 @@ public class MapperScannerConfigurer
     scanner.setSqlSessionTemplate(this.sqlSessionTemplate);
     scanner.setSqlSessionFactoryBeanName(this.sqlSessionFactoryBeanName);
     scanner.setSqlSessionTemplateBeanName(this.sqlSessionTemplateBeanName);
+    // 注入容器
     scanner.setResourceLoader(this.applicationContext);
     scanner.setBeanNameGenerator(this.nameGenerator);
     scanner.setMapperFactoryBeanClass(this.mapperFactoryBeanClass);

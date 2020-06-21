@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2019 the original author or authors.
+ * Copyright 2010-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package org.mybatis.spring.config;
 
 import java.lang.annotation.Annotation;
 
-import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.mybatis.spring.mapper.ClassPathMapperScanner;
+import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 
 /**
  * A {#code BeanDefinitionParser} that handles the element scan of the MyBatis. namespace
- * 
+ *
  * @author Lishu Luo
  * @author Eduardo Macarron
  *
@@ -56,7 +56,7 @@ public class MapperScannerBeanDefinitionParser extends AbstractBeanDefinitionPar
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @since 2.0.2
    */
   @Override
@@ -107,7 +107,7 @@ public class MapperScannerBeanDefinitionParser extends AbstractBeanDefinitionPar
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @since 2.0.2
    */
   @Override
